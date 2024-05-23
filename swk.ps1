@@ -5,15 +5,17 @@ $FieldLength = 4
 $FieldLengthOffset = $FieldLength - 1
 $FilePosition = 0
 $KeysStart = "00000000101"
+  
 Push-Location
-<#
+
 Add-Type -AssemblyName System.Windows.Forms
-$FileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{ InitialDirectory = [Environment]::GetFolderPath('Desktop') }
+#  [Enum]::GetNames('System.Environment+SpecialFolder')
+$FileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{ InitialDirectory = [Environment]::GetFolderPath('Recent') }
+$FileBrowser.Filter = "swk files (*.swk)|*.swk|All Files (*.*)|*.*"
 $null = $FileBrowser.ShowDialog()
 $SWKFile = $FileBrowser.FileName
 $OPSFilepath = Split-Path -Parent $SWKFile
-#>
-$SWKFile = "C:\Utils\OL00001A.swk"
+#$SWKFile = "C:\Utils\OL00001A.swk"
 
 Write-Host "Loading data from $SWKFile"
 if ($PSVersionTable.PSVersion.Major -lt 6) {
@@ -49,13 +51,11 @@ Write-Host "Number of areas:" $SWKareas
 $FilePosition = $FilePosition + $FieldLength
 #
 # Length of 1st element in descriptor
-Write-Host "0 On $FilePosition"
+# Write-Host "0 On $FilePosition"
 $ElementNumber = 1
 $ElementLength = "0x" + [System.Text.Encoding]::ASCII.GetString($SWKBuffer[($FilePosition)..($FilePosition + $FieldLengthOffset)])
 $ElementLength = [int]$ElementLength
-Write-Host "Parameter $ElementNumber length is $ElementLength"
 $ElementContent = [System.Text.Encoding]::ASCII.GetString($SWKBuffer[$FilePosition..($FilePosition + $ElementLength)])
-$ElementContent
 $FilePosition = $AreaStart + $ElementLength
 Write-Host "1 On $FilePosition"
 $Area1Code = "0x" + [System.Text.Encoding]::ASCII.GetString($SWKBuffer[$FilePosition..($FilePosition + $FieldLengthOffset)])
@@ -128,7 +128,7 @@ Write-Host $Area3Element2Contents
 
 $CheckStart = [System.Text.Encoding]::ASCII.GetString($SWKBuffer[$FilePosition..($FilePosition + ($KeysStart.Length -1))])
 if ( $null -eq (Compare-Object -ReferenceObject $CheckStart  -DifferenceObject $KeysStart ) ) {
-  Write-Host "Found start of licenses"
+  Write-Host "Found start of licenses at $FilePosition"
   $FilePosition = $FilePosition +5
   }
   else {
