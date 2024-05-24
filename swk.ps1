@@ -12,6 +12,7 @@ Add-Type -AssemblyName System.Windows.Forms
 #  [Enum]::GetNames('System.Environment+SpecialFolder')
 $FileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{ InitialDirectory = [Environment]::GetFolderPath('Recent') }
 $FileBrowser.Filter = "swk files (*.swk)|*.swk|All Files (*.*)|*.*"
+#$FileBrowser.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
 $null = $FileBrowser.ShowDialog()
 $SWKFile = $FileBrowser.FileName
 $OPSFilepath = Split-Path -Parent $SWKFile
@@ -133,5 +134,23 @@ if ( $null -eq (Compare-Object -ReferenceObject $CheckStart  -DifferenceObject $
   }
   else {
     Write-Host "Something wrong, check file"
+    exit
     }
+$KeysFullString = $SWKBuffer[$FilePosition..$SWKBuffer.Length]
+
+# Process $KeysFullString
+$KeyPosition = 0
+$KeyOffset = 3
+while ( $KeyPosition -lt $KeysFullString.Length ) {
+# Get key number
+  [int]$KeyNumber = [System.Text.Encoding]::ASCII.GetString($KeysFullString[$KeyPosition..($KeyPosition + $KeyOffset)])
+# it is now only 1 field but anyway
+  $KeyPosition = $KeyPosition + 4
+  [int]$NumberOfKeysFields = "0x" + [System.Text.Encoding]::ASCII.GetString($KeysFullString[$KeyPosition..($KeyPosition + 1)])
+# Get license value
+  $KeyPosition = $KeyPosition + 2
+  [int]$KeyValue = [System.Text.Encoding]::ASCII.GetString($KeysFullString[$KeyPosition..($KeyPosition + 5)])
+  Write-Host "Key $KeyNumber : $KeyValue"
+  $KeyPosition = $KeyPosition + 6
+}
 Pop-Location
