@@ -204,7 +204,7 @@ $CPUIdsCounter = 1
 foreach ( $ID in $CPUIds ) {
    Write-Debug -message "CPUId $CPUIdsCounter : $ID"
    $HashKeyName = "CPUId" + $CPUIdsCounter
-   $SWKdecoded.$HashKeyName = $ID
+   $SWKHeader.$HashKeyName = $ID
    $CPUIdsCounter++
    }
 Write-Host
