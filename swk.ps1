@@ -12,7 +12,7 @@ $FilePosition = 0
 $OldOPSVersionFieldLength = 5
 $SWKeysAreaMarker = "28a1"
 # Old marker
-# $SWKeysAreaMarker = "21dd"
+$OldSWKeysAreaMarker = "21e9"
 $KeyOffsetR7 = 3
 $KeyOffsetR8 = 5
 #
@@ -68,13 +68,6 @@ else {
   $SWKBuffer = Get-Content -Path $SWKFile -AsByteStream
   }
 Write-Host "Loaded "$SWKBuffer.Length "bytes"
-if ( $SWKBuffer.Length -lt 10000 ) {
-  Write-Host "Looks like Release <= R7.1"
-  $KeyOffset = $KeyOffsetR7
-  }
-  else {
-    $KeyOffset = $KeyOffsetR8
-    }
 #
 # Process DLL version string
 # At the moment its first four bytes of any swk file.
@@ -178,6 +171,15 @@ $SWKKeysCode = [int]$SWKKeysCode - $FieldLength
 $FilePosition = $FilePosition + $FieldLength
 Write-Debug -message "SWK Keys length: $SWKKeysCode"
 Write-Debug -message "5 On $FilePosition"
+$GetSWMarker = [System.Text.Encoding]::ASCII.GetString($SWKBuffer[($FilePosition - 4)..($FilePosition -1)])
+if ( $GetSWMarker -eq $SWKeysAreaMarker  ) {
+  $KeyOffset = $KeyOffsetR8
+  }
+  else {
+    Write-Host "Looks like Release <= R7.1"
+    $KeyOffset = $KeyOffsetR7
+    }
+
 #
 # Skip OPS version field
 #
@@ -225,7 +227,7 @@ if ( $null -eq (Compare-Object -ReferenceObject $CheckStart  -DifferenceObject $
 # Load SWK values to one string
 #
 $KeysFullString = $SWKBuffer[$FilePosition..$SWKBuffer.Length]
-
+#
 # Process $KeysFullString
 # Point to the beginning of the string
 $KeyPosition = 0
@@ -233,9 +235,13 @@ $KeyTotalCounter = $KeyActiveCounter = 0
 while ( $KeyPosition -lt $KeysFullString.Length ) {
 # Get key number
   [int32]$KeyNumber = [System.Text.Encoding]::ASCII.GetString($KeysFullString[$KeyPosition..($KeyPosition + $FieldLengthOffset)])
-  # it is now only 1 value but anyway
+  # it is now only 1 value, on Releases < R8 it could be min and max fields
   $KeyPosition = $KeyPosition + $FieldLength
   [int32]$NumberOfKeysFields = "0x" + [System.Text.Encoding]::ASCII.GetString($KeysFullString[$KeyPosition..($KeyPosition + 1)])
+# if it is for Releases < R8 then it could be two elements in sw key so we get last one ie maximum value
+  if ( $NumberOfKeysFields -gt "1" ) {
+    $KeyPosition = $KeyPosition + 4
+    }
 # Get license value
   $KeyPosition = $KeyPosition + 2
   if (($KeyNumber -eq "301") -or ($KeyNumber -eq "302")) {
@@ -252,7 +258,7 @@ while ( $KeyPosition -lt $KeysFullString.Length ) {
   $KeyPosition = $KeyPosition + ($KeyOffset + 1)
   Write-Debug -message "Key $KeyNumber $KeyName : $KeyValue"
   if ( ($SWKArray.$KeyNumber) -and ($KeyValue -ne "0") ) {
-      Write-Debug -message "$KeyNumber $KeyName : $KeyValue"
+#      Write-Debug -message "$KeyNumber $KeyName : $KeyValue"
       $SWKdecoded.$KeyNumber = @()
       $SWKdecoded.$KeyNumber += ($KeyName, $KeyValue)
       $KeyActiveCounter++
@@ -264,6 +270,16 @@ while ( $KeyPosition -lt $KeysFullString.Length ) {
 #
 $SWKHeader.SWVersion = $SWVersionsArray[($SWKdecoded."165")[1]]
 Write-Debug -Message "Processed Total $KeyCounter Active $KeyActiveCounter keys"
-$SWKHeader.Keys | ForEach-Object { Write-Host "$($_)" "`t" $($SWKHeader[$_]) }
-$SWKdecoded.Keys | ForEach-Object { Write-Host "$($_)" "`t" ( $($SWKdecoded[$_]) -join "`t") } 
+$null = New-Item $OPSFilepath\tt.txt -Force
+  
+#$SWKHeader.Keys | ForEach-Object { Write-Host "$($_)" "`t" $($SWKHeader[$_]) }
+$SWKHeader.Keys | ForEach-Object {
+   $StringToPrint = "$($_)" + "`t" + $($SWKHeader[$_])
+   $StringToPrint | Out-File -FilePath $OPSFilepath\tt.txt -Append
+   }
+#$SWKdecoded.Keys | ForEach-Object { Write-Host "$($_)" "`t" ( $($SWKdecoded[$_]) -join "`t") } 
+$SWKdecoded.Keys | ForEach-Object {
+  $StringToPrint = "$($_)" + "`t" + ( $($SWKdecoded[$_]) -join "`t")
+  $StringToPrint | Out-File -FilePath $OPSFilepath\tt.txt -Append
+  }
 Pop-Location
