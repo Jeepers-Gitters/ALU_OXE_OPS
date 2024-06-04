@@ -1,3 +1,42 @@
+
+<#PSScriptInfo
+
+.VERSION 1.0
+
+.GUID 393ea353-aa45-4eec-b0d1-84952d2c914e
+
+.AUTHOR Cola Beldy
+
+.COMPANYNAME 
+
+.COPYRIGHT 
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ Alcatel-Lucent OXE swk file reader 
+
+#> 
+Param()
 # OPS swk file reader
 # for SW key description see TC 464 (>=R5.0), TC 480 (R5.1), TC 531 (R5.1.1), TC 548 (R5.1.2), TC 593 (R6.0), TC 619 (R6.0.1), TC 652 (R6.1), TC 685 (R6.1.1), TC 711 (R6.2),838 (R7.1,), TC 777ed04 (R8.0), TC 777ed05 (R9.0), TC 1645 (R10.1)
 # and file /DHS3bin/oneshot/mtcl/Packages.dct
@@ -36,9 +75,11 @@ $ExportFileExtension = ".txt"
 #
 # Debugging Preferencies
 #
-#$DebugPreference = "SilentlyContinue"
-$DebugPreference = "Continue"
+$DebugPreference = "SilentlyContinue"
+#$DebugPreference = "Continue"
+# Enable for debugging
 $ErrorActionPreference = "Stop"  
+$ErrorActionPreference = "Continue"  
 #
 # Return Codes
 #
@@ -114,10 +155,8 @@ $FilePosition = $FilePosition + $FieldLength
 #
 # Length of 1st element in descriptor
 # Write-Debug -message "0 On $FilePosition"
-$ElementNumber = 1
 $ElementLength = "0x" + [System.Text.Encoding]::ASCII.GetString($SWKBuffer[($FilePosition)..($FilePosition + $FieldLengthOffset)])
 $ElementLength = [int]$ElementLength
-$ElementContent = [System.Text.Encoding]::ASCII.GetString($SWKBuffer[$FilePosition..($FilePosition + $ElementLength)])
 $FilePosition = $AreaStart + $ElementLength
 Write-Debug -message "1 On $FilePosition"
 #
@@ -243,7 +282,8 @@ while ( $KeyPosition -lt $KeysFullString.Length ) {
   $KeyPosition = $KeyPosition + $FieldLength
   [int32]$NumberOfKeysFields = "0x" + [System.Text.Encoding]::ASCII.GetString($KeysFullString[$KeyPosition..($KeyPosition + 1)])
 # if it is for Releases < R8 then it could be two elements in sw key so we get last one ie maximum value
-  if ( $NumberOfKeysFields -gt "1" ) {
+  if ( $NumberOfKeysFields -eq "2" ) {
+# Skip minimum value if there are min and max values
     $KeyPosition = $KeyPosition + 4
     }
 # Get license value
@@ -251,7 +291,7 @@ while ( $KeyPosition -lt $KeysFullString.Length ) {
   if (($KeyNumber -eq "301") -or ($KeyNumber -eq "302")) {
     [string]$KeyValue = [System.Text.Encoding]::ASCII.GetString($KeysFullString[$KeyPosition..($KeyPosition + $KeyOffset)])
 # There is no need to print empty Hardkey
-    if ( [int]$KeyValue -eq "0" ) {
+    if ( $KeyValue -eq "000000" ) {
       [int32]$KeyValue = 0
       }
     }
@@ -260,7 +300,7 @@ while ( $KeyPosition -lt $KeysFullString.Length ) {
       }
   $KeyName = $SWKArray.$KeyNumber
   $KeyPosition = $KeyPosition + ($KeyOffset + 1)
-  Write-Debug -message "Key $KeyNumber $KeyName : $KeyValue"
+  Write-Debug -message "Key $KeyNumber $NumberOfKeysFields $KeyName : $KeyValue"
   if ( ($SWKArray.$KeyNumber) -and ($KeyValue -ne "0") ) {
 #      Write-Debug -message "$KeyNumber $KeyName : $KeyValue"
       $SWKdecoded.$KeyNumber = @()
@@ -277,18 +317,39 @@ Write-Debug -Message "Processed Total $KeyCounter Active $KeyActiveCounter keys"
 #
 # export file would be deleted if exists
 #
-$null = New-Item $ExportFileName -Force
-Write-Debug -Message "File $ExportFileName deleted."
+try {
+  $null = New-Item $ExportFileName -Force
+  Write-Debug -Message "File $ExportFileName deleted."
+  }
+  catch {
+    Write-Host "Caught error deleting file:" $_
+    Write-Host $_.ScriptStackTrace
+    }
  
 #$SWKHeader.Keys | ForEach-Object { Write-Host "$($_)" "`t" $($SWKHeader[$_]) }
 $SWKHeader.Keys | ForEach-Object {
    $StringToPrint = "$($_)" + "`t" + $($SWKHeader[$_])
-   $StringToPrint | Out-File -FilePath $ExportFileName -Append
-   }
+try {
+  $StringToPrint | Out-File -FilePath $ExportFileName -Append
+  }
+  catch {
+    Write-Host "Caught error writing to file:" $_
+    Write-Host $_.ScriptStackTrace
+    }
+    }
 #$SWKdecoded.Keys | ForEach-Object { Write-Host "$($_)" "`t" ( $($SWKdecoded[$_]) -join "`t") } 
 $SWKdecoded.Keys | ForEach-Object {
   $StringToPrint = "$($_)" + "`t" + ( $($SWKdecoded[$_]) -join "`t")
+try {
   $StringToPrint | Out-File -FilePath $ExportFileName -Append
   }
+  catch {
+    Write-Host "Caught error writing to file:" $_
+    Write-Host $_.ScriptStackTrace
+    }
+    }
 Write-Debug -message "File $ExportFileName written."
+Get-Content $ExportFileName | Out-GridView
 Pop-Location
+
+
