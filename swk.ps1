@@ -32,10 +32,12 @@ $CPUIds = @()
 #
 $SWVersionsArray = @{ 30 = "5.0Lx"; 31 = "5.1"; 32 = "6.0"; 33 = "6.1"; 34 = "6.2"; 35 = "7.0"; 36 = "7.1"; 37 = "8.0"; 38 = "9.0"; 39 = "9.1"; 40 = "10.0"; 41 = "10.1"; 42 = "11.0"; 43 = "11.1"; 44 = "11.2"; 45 = "12.0"; 46 = "12.1"; 47 = "12.2"; 48 = "12.3"; 49 = "12.4"; 50 = "R100"; 51 = "R100.1" }
 #
+$ExportFileExtension = ".txt"
+#
 # Debugging Preferencies
 #
-$DebugPreference = "SilentlyContinue"
-#$DebugPreference = "Continue"
+#$DebugPreference = "SilentlyContinue"
+$DebugPreference = "Continue"
 $ErrorActionPreference = "Stop"  
 #
 # Return Codes
@@ -60,6 +62,8 @@ if ( -not $SWKFile ) {
   exit $ErrorNotFileChosen
   }
 $OPSFilepath = Split-Path -Parent $SWKFile
+$ExportFileName = (Get-Item $SWKFile).BaseName
+$ExportFileName = $OPSFilepath + "\" + $ExportFileName + $ExportFileExtension
 Write-Host "Loading data from $SWKFile"
 if ($PSVersionTable.PSVersion.Major -lt 6) {
   $SWKBuffer = Get-Content -Path $SWKFile -Encoding Byte
@@ -270,16 +274,21 @@ while ( $KeyPosition -lt $KeysFullString.Length ) {
 #
 $SWKHeader.SWVersion = $SWVersionsArray[($SWKdecoded."165")[1]]
 Write-Debug -Message "Processed Total $KeyCounter Active $KeyActiveCounter keys"
-$null = New-Item $OPSFilepath\tt.txt -Force
-  
+#
+# export file would be deleted if exists
+#
+$null = New-Item $ExportFileName -Force
+Write-Debug -Message "File $ExportFileName deleted."
+ 
 #$SWKHeader.Keys | ForEach-Object { Write-Host "$($_)" "`t" $($SWKHeader[$_]) }
 $SWKHeader.Keys | ForEach-Object {
    $StringToPrint = "$($_)" + "`t" + $($SWKHeader[$_])
-   $StringToPrint | Out-File -FilePath $OPSFilepath\tt.txt -Append
+   $StringToPrint | Out-File -FilePath $ExportFileName -Append
    }
 #$SWKdecoded.Keys | ForEach-Object { Write-Host "$($_)" "`t" ( $($SWKdecoded[$_]) -join "`t") } 
 $SWKdecoded.Keys | ForEach-Object {
   $StringToPrint = "$($_)" + "`t" + ( $($SWKdecoded[$_]) -join "`t")
-  $StringToPrint | Out-File -FilePath $OPSFilepath\tt.txt -Append
+  $StringToPrint | Out-File -FilePath $ExportFileName -Append
   }
+Write-Debug -message "File $ExportFileName written."
 Pop-Location
