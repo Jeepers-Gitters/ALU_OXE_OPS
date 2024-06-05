@@ -331,8 +331,8 @@ $SWKdecoded.Keys | ForEach-Object {
     Write-Host $_.ScriptStackTrace
   }
 }
-Write-Debug -Message "File $ExportFileName written."
 Get-Content $ExportFileName | Out-GridView
+Write-Host "File $ExportFileName written."
 Pop-Location
 exit $NoErrors
 
