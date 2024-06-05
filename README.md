@@ -1,3 +1,5 @@
+[![Hits](https://hits.sh/github.com/Jeepers-Gitters/ALU_OXE_OPS.svg)](https://hits.sh/github.com/Jeepers-Gitters/ALU_OXE_OPS/)
+[![Github All Releases](https://img.shields.io/github/downloads/Jeepers-Gitters/ALU_OXE_OPS/total.svg)]()
 # Alcatel-Lucent OmniPCX Enterprise license file reader
  I still have such a reader written in QuickBasic. Its time to use modern tools.
 - Fully rewritten in Powershell
