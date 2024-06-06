@@ -35,8 +35,8 @@
 # for SW key description see TC 464 (>=R5.0), TC 480 (R5.1), TC 531 (R5.1.1), TC 548 (R5.1.2), TC 593 (R6.0), TC 619 (R6.0.1), TC 652 (R6.1), TC 685 (R6.1.1), TC 711 (R6.2),838 (R7.1,), TC 777ed04 (R8.0), TC 777ed05 (R9.0), TC 1645 (R10.1)
 # and file /DHS3bin/oneshot/mtcl/Packages.dct
 param(
-    [Parameter()]
-    [Switch]$JustShow
+  [Parameter()]
+  [switch]$JustShow
 )
 $PowerShellCore = 6
 $SWKVersionLength = 8
@@ -92,7 +92,7 @@ $ErrorNotSwkFile = 2
 # 
 # Main
 #
-Write-Host -ForegroundColor Yellow "Alcatel-Lucent OXE swk file reader by Jeepers-Gitters@github.com. ©2024" 
+Write-Host -ForegroundColor Yellow "Alcatel-Lucent OXE swk file reader by Jeepers-Gitters@github.com. ?2024"
 Push-Location
 Add-Type -AssemblyName System.Windows.Forms
 #
@@ -282,7 +282,7 @@ while ($KeyPosition -lt $KeysFullString.Length) {
   if (($KeyNumber -eq "301") -or ($KeyNumber -eq "302")) {
     [string]$KeyValue = [System.Text.Encoding]::ASCII.GetString($KeysFullString[$KeyPosition..($KeyPosition + $KeyOffset)])
     # There is no need to print empty Hardkey "000000"
-    if ( ($KeyValue -eq "000000") -or ($KeyValue -eq "0000") ) {
+    if (($KeyValue -eq "000000") -or ($KeyValue -eq "0000")) {
       [int32]$KeyValue = 0
     }
   }
@@ -320,27 +320,27 @@ $SWKdecoded.Keys | ForEach-Object {
 # Use Out-GridView for better experience
 #
 $ExportArray | Out-GridView
-if ( $JustShow ) {
+if ($JustShow) {
   Write-Host "Verbose mode chosen - No file written."
-  } 
-  else {
-    try {
-      $null = New-Item $ExportFileName -Force
-      Write-Debug -Message "File $ExportFileName deleted."
-      }
-      catch {
-        Write-Host "Caught error deleting file:" $_
-        Write-Host $_.ScriptStackTrace
-        }
-        try {
-          $ExportArray | Out-File -FilePath $ExportFileName -Append
-          }
-          catch {
-            Write-Host "Caught error writing to file:" $_
-            Write-Host $_.ScriptStackTrace
-            }
-            Write-Host "File $ExportFileName written."
-            }
+}
+else {
+  try {
+    $null = New-Item $ExportFileName -Force
+    Write-Debug -Message "File $ExportFileName deleted."
+  }
+  catch {
+    Write-Host "Caught error deleting file:" $_
+    Write-Host $_.ScriptStackTrace
+  }
+  try {
+    $ExportArray | Out-File -FilePath $ExportFileName -Append
+  }
+  catch {
+    Write-Host "Caught error writing to file:" $_
+    Write-Host $_.ScriptStackTrace
+  }
+  Write-Host "File $ExportFileName written."
+}
 Pop-Location
 exit $NoErrors
 
