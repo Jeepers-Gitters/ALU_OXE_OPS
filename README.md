@@ -10,4 +10,4 @@
 - Just copy swk.ps1 file or compiled executable swk.exe to any folder you like. Or, you can compile script yourself with ps2exe utility 
 # Using script
 - Run script or exe file then navigate to the folder where is your swk file is. Choose it, then contents of swk file displayed in a way similar to "spadmin" command with possibility to search.
-- Tab-delimited Values file is automatically written in a folder with the same name as swk file. If you want just check this file use -JustShow option.
+- Tab-delimited Values file is automatically written in a folder with the same name as swk file but with .txt extension. If you just want to check swk file use -JustShow option - no *.txt file is written in this case.
