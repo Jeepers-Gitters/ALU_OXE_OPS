@@ -34,6 +34,10 @@
 # OPS swk file reader
 # for SW key description see TC 464 (>=R5.0), TC 480 (R5.1), TC 531 (R5.1.1), TC 548 (R5.1.2), TC 593 (R6.0), TC 619 (R6.0.1), TC 652 (R6.1), TC 685 (R6.1.1), TC 711 (R6.2),838 (R7.1,), TC 777ed04 (R8.0), TC 777ed05 (R9.0), TC 1645 (R10.1)
 # and file /DHS3bin/oneshot/mtcl/Packages.dct
+param(
+    [Parameter()]
+    [Switch]$JustShow
+)
 $PowerShellCore = 6
 $SWKVersionLength = 8
 #$SWKArray = ((1, "GroupTelephony"), (2, "Phonebook users"), (4, "Hotel guest sets"), (5, "Multilangual voice prompts"), (6, "Hotel AHL on V24"), (9, "PRA"), (10, "Voice Guide"), (11, "AutomatedAttendant"), (12, "DISA"), (13, "ECSEngine"), (14, "Integrated metering report"), (15, "ExternalAccounting"), (16, "V24 for Metering on fly (not used"), (19, "Corporate netw. (ABC/ABC-VPN/ISVPN"), (20, "Automated attendant"), (21, "Nb of VPS ports"), (25, "CLI (4600"), (29, "DECT/PWT Engine"), (30, "4736ACD"), (31, "AMIS"), (38, "Infocenter link"), (39, "Performance"), (40, "Real Time Incidents"), (41, "DECT register"), (42, "Accounting users"), (44, "4059 SBC"), (45, "4059 BLF"), (46, "Fax server ABC-A link"), (47, "Alarms"), (49, "Directory"), (50, "Configuration"), (51, "Real Time Metering on V24"), (52 ,"4635 Basic Package"), (56, "4635 Networking OctelNet"), (57, "4635 Fax manager"), (58, "4635 Call manager"), (59, "4635 Hotel manager"), (60, "4635 Nb of port"), (61, "4635 Nb of hours"), (62, "4635 Nb of languages"), (63, "4635 Attendant manager"), (65, "4635 Recording manager"), (66, "4635 Networking AMIS"), (75, "Networking hospital"), (76, "CCD Agents"), (77, "CCS mono-site"), (78, "CRI call record interface"), (79, "ISVPN"), (80, "VPN"), (81, "Meet me conf. between 29 parties"), (82, "Nb of DECT terminals"), (83, "Flow Metering on Ethernet"), (84, "4635 users"), (86, "Automatic directory pop-up"), (87, "BetaTest"), (89, "Notification server"), (90, "Roaming DECT/PWT"), (91, "Voice guide record from Reflexes"), (94, "WMI Workforce manager interface"), (96, "HotelSuite"), (97, "VPS users"), (98, "Accounting for local calls"), (99, "Accounting for ABC calls"), (100, "CSTA profile"), (101, "CSTA monitoring requests"), (102, "CSS multi-site"), (103, "Real Time Interface"), (105, "Compressed calls"), (106, "Transfix"), (107, "4635 Visual messenger"), (109, "4635 IP Octel Networking"), (110, "4635 Global message redundancy"), (111, "Ubiquity"), (112, "CCSLite"), (113, "CSTA pilots monitoring"), (114, "TSAPI server"), (115, "CCA softphone"), (116, "ECC My Softphone (4980 Std"), (117, "ECC 4980 Option (4980 Adv"), (119, "4980 nomadic logged"), (121, "CLIP on VPS"), (122, "ACAPI via CMIP"), (123, "CSTA IVR ports monitored"), (125, "CCweb Agents"), (126, "Hotel AHL link"), (127, "Encryption DECT/PWT users"), (128, "4615Port"), (129, "ECC My Softphone (4980 Grp"), (130, "CSTA voice recording type"), (131, "Remote LIO"), (132, "IP-Trunk"), (133, "Mastered conference"), (134, "Multi-tenant"), (135, "G729A Server"), (136, "Priority"), (137, "Call restriction"), (138, "IP Clients"), (143, "TAPI premium server"), (145, "CSTA Recording B channel"), (146, "PWT mobility (UTAM"), (147, "IPDevice"), (148, "IP Call Server"), (149, "4980Dispatcher"), (151, "4635 VPIM"), (152, "Ith Radio"), (153, "SNMP Trap"), (154, "Additional S0 features"), (155, "Additional safety features"), (156, "Ith"), (157, "CCA nomadic"), (158, "CSTA By-pass"), (160, "CCemail Agents"), (161, "CCoutbound Agents"), (162, "CCoutpredial Agents"), (164, "CSTA Record networked"), (165, "OmniPCX Enterprise release"), (166, "4980 multi device"), (167, "ACR data base read"), (168, "Nb of HPOV node"), (169, "Voice detection channels"), (173, "Advanced Reflexes users"), (174, "Analog users"), (175, "Mobile users"), (176, "Advanced IP users"), (177, "SIP users"), (178, "4645 Voice mail engine"), (179, "4645 users"), (181, "OmniPCX Enterprise"), (182, "4645 networking"), (183, "4645 additional language"), (184, "Integrated Gatekeeper"), (185, "SIP Gateway"), (186, "E-CS redundancy"), (187, "H323 (G711) network link"), (188, "SIP network links"), (189, "CCTI agents"), (190, "RSI call center agents"), (191, "Campus DECT"), (192, "DREXProtocol"), (193, "Embedded voice guides"), (194, "EVA Portal users"), (195, "CCD profile"), (196, "RSI Business agents"), (197, "G729A Client"), (198, "G723.1 Client"), (199, "Version 4400 R5.0 Ux"), (200, "4400 Mobiles migration"), (201, "4400 Reflexes migration"), (202, "4400 Analog migration "), (203, "Upgrade CCSLight"), (213, "eCS engine physical users"), (300, "SWK file edition"), (301, "HardKey 1"), (302,"HardKey 2"), (308, "Remote extension"), (309, "XML telephony"), (310, "CLIP Z"), (311, "ACR Networking"), (312, "Scripting agents"), (313, "eCCGateway"), (314, "4635MyMessagingUsers"), (316, "Standard Reflexes users"), (317, "Standard IP users"), (318, "MaxConnectionPRS"), (319,"Easy contact CCD"), (321, "Mobile IP Touch"), (322, "CSTA over 9999"), (323, "Executive UA users"), (324, "Executive IP users"), (325, "IPTouchSecurity"), (326, "IPTouchSecurityUsers"), (327, "SecurityModule"), (328, "IPSoftphone"), (329, "IPSoftphoneCCD"), (330, "AdvancedMIPTUsers"), (331,"MyPhone IP Desktop"), (332, "PCS max. number"), (333, "CPU-id 25 characters"), (334, "MaxIPRecording"), (335, "Greeting Assistant"), (336, "IMEStations"), (337, "SIPExtVoiceMails"), (338, "Migration ELA users to eZ32"), (339, "Migration ELN users to eUA32"), (340,"Encryption server IP users"), (341, "BiCS Release"), (342, "ABC-IP Access Number"), (343, "MgSec Max Number"), (344, "IP for free"), (345, "SIP extension users"), (346, "Max agents voice migration"), (347, "Max agents email migration"), (348, "Soft MSM lock"), (349, "Fusion IP centralisation"), (358, "Max number of SIP TLS sets"), (359, "Max com simultaneous SIP TLS"), (363, "NOESIP TLS users"), (364, "Max Attendants 4059EE"), (371, "IPDect Users"), (372, "OpenTouch Business Edition"), (384, "OXE Media Servers"), (385, "VoIP channels on OMS"), (386, "UC as a Service"), (396, "IPV6"), (406, "OT gateways allowed"), (424, "Native Encryption Users"), (428, "Sip Trunk Recording"), (429, "Correlator Data"), (430, "SipSoftPhone"), (431, "Opex Mode"), (464, "SOSM feature"), (467, "ARS"), (468, "ProductType"), (469, "G723.1 Server"), (1000, "SupervisableSets"), (1001, "VoiceMailBoxes"), (1002, "FaxMailBoxes") )
@@ -66,6 +70,9 @@ $CPUIds = @()
 #
 $SWVersionsArray = @{ 30 = "5.0Lx"; 31 = "5.1"; 32 = "6.0"; 33 = "6.1"; 34 = "6.2"; 35 = "7.0"; 36 = "7.1"; 37 = "8.0"; 38 = "9.0"; 39 = "9.1"; 40 = "10.0"; 41 = "10.1"; 42 = "11.0"; 43 = "11.1"; 44 = "11.2"; 45 = "12.0"; 46 = "12.1"; 47 = "12.2"; 48 = "12.3"; 49 = "12.4"; 50 = "R100"; 51 = "R100.1" }
 #
+# Array for final output
+#
+$ExportArray = @()
 $ExportFileExtension = ".txt"
 #
 # Debugging Preferencies
@@ -85,6 +92,7 @@ $ErrorNotSwkFile = 2
 # 
 # Main
 #
+Write-Host -ForegroundColor Yellow "Alcatel-Lucent OXE swk file reader by Jeepers-Gitters@github.com. ©2024" 
 Push-Location
 Add-Type -AssemblyName System.Windows.Forms
 #
@@ -298,41 +306,41 @@ while ($KeyPosition -lt $KeysFullString.Length) {
 $SWKHeader.SWVersion = $SWVersionsArray[($SWKdecoded. "165")[1]]
 Write-Debug -Message "Processed Total $KeyCounter Active $KeyActiveCounter keys"
 #
-# export file would be deleted if exists
-#
-try {
-  $null = New-Item $ExportFileName -Force
-  Write-Debug -Message "File $ExportFileName deleted."
-}
-catch {
-  Write-Host "Caught error deleting file:" $_
-  Write-Host $_.ScriptStackTrace
-}
-
 #$SWKHeader.Keys | ForEach-Object { Write-Host "$($_)" "`t" $($SWKHeader[$_]) }
 $SWKHeader.Keys | ForEach-Object {
   $StringToPrint = "$($_)" + "`t" + $($SWKHeader[$_])
-  try {
-    $StringToPrint | Out-File -FilePath $ExportFileName -Append
-  }
-  catch {
-    Write-Host "Caught error writing to file:" $_
-    Write-Host $_.ScriptStackTrace
-  }
+  $ExportArray += $StringToPrint
 }
 #$SWKdecoded.Keys | ForEach-Object { Write-Host "$($_)" "`t" ( $($SWKdecoded[$_]) -join "`t") } 
 $SWKdecoded.Keys | ForEach-Object {
   $StringToPrint = "$($_)" + "`t" + ($($SWKdecoded[$_]) -join "`t")
-  try {
-    $StringToPrint | Out-File -FilePath $ExportFileName -Append
-  }
-  catch {
-    Write-Host "Caught error writing to file:" $_
-    Write-Host $_.ScriptStackTrace
-  }
+  $ExportArray += $StringToPrint
 }
-Get-Content $ExportFileName | Out-GridView
-Write-Host "File $ExportFileName written."
+#
+# Use Out-GridView for better experience
+#
+$ExportArray | Out-GridView
+if ( $JustShow ) {
+  Write-Host "Verbose mode chosen - No file written."
+  } 
+  else {
+    try {
+      $null = New-Item $ExportFileName -Force
+      Write-Debug -Message "File $ExportFileName deleted."
+      }
+      catch {
+        Write-Host "Caught error deleting file:" $_
+        Write-Host $_.ScriptStackTrace
+        }
+        try {
+          $ExportArray | Out-File -FilePath $ExportFileName -Append
+          }
+          catch {
+            Write-Host "Caught error writing to file:" $_
+            Write-Host $_.ScriptStackTrace
+            }
+            Write-Host "File $ExportFileName written."
+            }
 Pop-Location
 exit $NoErrors
 
