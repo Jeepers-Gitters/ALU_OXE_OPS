@@ -319,7 +319,7 @@ $SWKdecoded.Keys | ForEach-Object {
 #
 # Use Out-GridView for better experience
 #
-$ExportArray | Out-GridView
+$ExportArray | Out-GridView -Wait
 if ($JustShow) {
   Write-Host "Verbose mode chosen - No file written."
 }
