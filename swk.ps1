@@ -317,9 +317,9 @@ $SWKdecoded.Keys | ForEach-Object {
   $ExportArray += $StringToPrint
 }
 #
-# Use Out-GridView for better experience
+# Use Out-GridView for search possibility
 #
-$ExportArray | Out-GridView -Wait
+$ExportArray | Out-GridView -Wait -Title "License Values for $SWKFile"
 if ($JustShow) {
   Write-Host "Verbose mode chosen - No file written."
 }
