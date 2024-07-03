@@ -97,14 +97,14 @@ if (-not $SWKFile) {
 $OPSFilepath = Split-Path -Parent $SWKFile
 $ExportFileName = (Get-Item $SWKFile).BaseName
 $ExportFileName = $OPSFilepath + "\" + $ExportFileName + $ExportFileExtension
-Write-Host "Loading data from $SWKFile"
+Write-Host "Loading data from:" $SWKFile
 if ($PSVersionTable.PSVersion.Major -lt $PowerShellCore) {
   $SWKBuffer = Get-Content -Path $SWKFile -Encoding Byte
 }
 else {
   $SWKBuffer = Get-Content -Path $SWKFile -AsByteStream
 }
-Write-Host "Loaded " $SWKBuffer.Length "bytes"
+Write-Host "Loaded bytes:" $SWKBuffer.Length 
 #
 # Process DLL version string
 # At the moment its first four bytes of any swk file.
