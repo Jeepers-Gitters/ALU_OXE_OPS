@@ -292,7 +292,7 @@ while ($KeyPosition -lt $KeysFullString.Length) {
 # Get exact SW Version 
 #
 $SWKHeader.SWVersion = $SWVersionsArray[($SWKdecoded. "165")[1]]
-Write-Debug -Message "Processed Total $KeyCounter Active $KeyActiveCounter keys"
+Write-Debug -Message "Processed Total $KeyTotalCounter Active $KeyActiveCounter keys"
 #
 $SWKHeader.Keys | ForEach-Object {
   $StringToPrint = "$($_)" + "`t" + $($SWKHeader[$_])
